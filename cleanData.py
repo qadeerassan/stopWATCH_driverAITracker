@@ -26,8 +26,8 @@ df = df.drop(columns="ID").drop(columns="Vin").drop(columns="ProcessedTimestamp"
 df[[c for c in df if df[c].isnull().sum() < 2]]
 # df = pd.DataFrame({"ReceivedTimestamp":pd.date_range('02:00:00', periods=4, freq='23H')})
 ftr = [3600,60,1]
-df = df[df["DeviceSerial"] != 108406724]
-print(df.head(5))
+df = df[df["TripState"].notnull()]
+df = df[df["DeviceSerial"] != "108406724"]
 timeList = []
 for i in df["ReceivedTimestamp"]:
     newStr = i
@@ -35,7 +35,6 @@ for i in df["ReceivedTimestamp"]:
     timeList.append(x)
 
 for i in df["TripState"]:
-    print(i)
     if(i == "Engine On"):
         i = 1.0
     else:
@@ -48,6 +47,6 @@ for i in df["TripState"]:
 m = RandomForestRegressor(n_jobs=-1)
 
 m.fit(timeList, df["ReceivedTimestamp"])
-m.score()
+m.predict("ReceivedTimestamp")
 print(df.head(30))
 print("test run")
